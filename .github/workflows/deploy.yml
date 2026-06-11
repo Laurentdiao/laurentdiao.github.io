@@ -11,6 +11,10 @@ on:
       - 'themes/**'
       - 'scaffolds/**'
       - 'package.json'
+  workflow_run:
+    workflows: ['Fetch Email Comments']
+    types:
+      - completed
   workflow_dispatch:
 
 jobs:
