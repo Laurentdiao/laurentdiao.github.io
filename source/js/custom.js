@@ -1,6 +1,6 @@
 // custom.js - 评论按钮 + 朋友圈样式 + 阅读进度 + 你好标题
 document.addEventListener('DOMContentLoaded', function () {
-  var isPost = !!document.querySelector('.layout-post');
+  var isPost = !!document.getElementById('article-container');
   var isHome = !!document.getElementById('recent-posts');
 
   // 首页：你好标题 + 朋友圈卡片样式

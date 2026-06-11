@@ -66,9 +66,15 @@ struct ContentView: View {
             }
             .sheet(isPresented: $showSettings) { SettingsView() }
             .sheet(isPresented: $showNewPost) { PostEditorView(mode: .create) }
-            .sheet(item: $postToEdit) { PostEditorView(mode: .edit($0)) }
-            .onChange(of: showNewPost) { if !$0 { Task { await service.fetchPosts() } } }
-            .onChange(of: postToEdit) { if $0 == nil { Task { await service.fetchPosts() } } }
+            .sheet(item: $postToEdit) { post in
+                PostEditorView(mode: .edit(post))
+            }
+            .onChange(of: showNewPost) { _, dismissed in
+                if !dismissed { Task { await service.fetchPosts() } }
+            }
+            .onChange(of: postToEdit) { _, post in
+                if post == nil { Task { await service.fetchPosts() } }
+            }
             .alert("错误", isPresented: .constant(service.errorMessage != nil)) {
                 Button("OK") { service.errorMessage = nil }
             } message: { Text(service.errorMessage ?? "") }
