@@ -19,7 +19,7 @@ from zoneinfo import ZoneInfo
 EMAIL = (os.environ.get("BLOG_EMAIL") or "").strip()
 RAW_PASSWORD = (os.environ.get("BLOG_EMAIL_PASSWORD") or "").strip()
 PASSWORD = re.sub(r"[\s\u200b\u200c\u200d\ufeff]+", "", RAW_PASSWORD)
-IMAP_SERVER = os.environ.get("BLOG_IMAP_SERVER", "outlook.office365.com").strip()
+IMAP_SERVER = os.environ.get("BLOG_IMAP_SERVER", "imap.gmail.com").strip()
 IMAP_PORT = int(os.environ.get("BLOG_IMAP_PORT", "993"))
 BOOTSTRAP_SINCE = os.environ.get("BLOG_COMMENTS_BOOTSTRAP_SINCE", "01-Jan-2026").strip()
 
@@ -277,9 +277,10 @@ def append_reply(comments, article, fields, msg, message_id):
 def auth_failed_message():
     return (
         "AUTHENTICATE failed. 请检查 GitHub Secrets 中的 BLOG_EMAIL 和 BLOG_EMAIL_PASSWORD："
-        "BLOG_EMAIL 必须是完整邮箱；BLOG_EMAIL_PASSWORD 建议使用 Microsoft app password，"
+        "BLOG_EMAIL 必须是完整 Gmail 地址；BLOG_EMAIL_PASSWORD 必须使用 Google app password，"
         "不要使用网页登录密码；如果复制的 app password 带空格、换行或隐藏分隔符，本脚本会自动去掉。"
-        "如果确认 secret 正确但仍失败，通常是 Outlook.com 禁用了 IMAP/basic auth 或触发了安全拦截。"
+        "如果确认 secret 正确但仍失败，请检查 Gmail 是否开启 IMAP、Google 账号是否开启两步验证，"
+        "以及 app password 是否为这个 Gmail 账号新生成。"
     )
 
 

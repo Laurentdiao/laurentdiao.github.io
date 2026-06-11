@@ -1,40 +1,53 @@
-# Email Comments Troubleshooting
+# Email Comments Setup
 
-## AUTHENTICATE failed
+## Gmail settings
 
-`AUTHENTICATE failed` happens before the script can read any email. The most likely cause is Microsoft account authentication, not the comment parser.
+The comment workflow now reads comments from Gmail through IMAP.
 
-Check these items in order:
+GitHub repository secrets:
 
-1. GitHub repository -> Settings -> Secrets and variables -> Actions.
-2. Confirm `BLOG_EMAIL` is the full mailbox address, for example `name@hotmail.com`.
-3. Confirm `BLOG_EMAIL_PASSWORD` is a Microsoft app password, not the normal web login password.
-4. If the app password was shown with spaces, either paste it exactly or remove spaces. The script removes spaces automatically, but hidden characters still matter.
-5. In the Microsoft account security page, two-step verification must be on before app passwords are available.
-6. Create a fresh app password, update `BLOG_EMAIL_PASSWORD`, then run `Fetch Email Comments` manually.
-7. If login still fails, open Outlook web once to confirm the mailbox is not locked by a security challenge.
+- `BLOG_EMAIL`: `dwinnie137@gmail.com`
+- `BLOG_EMAIL_PASSWORD`: a Google app password for `dwinnie137@gmail.com`, not the normal Gmail login password
 
-When the workflow starts, it prints safe diagnostics:
+Workflow IMAP settings:
 
-- `BLOG_EMAIL` is masked but should still show the correct domain.
-- `BLOG_EMAIL_PASSWORD length after cleanup` should usually be `16` for a Microsoft app password.
-- If the password length is `0`, the repository secret was not passed to the workflow.
-- If the password length is much longer than `16`, it is probably not the app password that Microsoft generated.
-- If the diagnostics look correct but `AUTHENTICATE failed` still appears, Microsoft is rejecting IMAP username/password login for that mailbox. Re-check Outlook.com IMAP access, account security prompts, and whether the account/tenant allows app passwords or basic IMAP authentication.
-
-Default IMAP settings used by the workflow:
-
-- Server: `outlook.office365.com`
+- Server: `imap.gmail.com`
 - Port: `993`
 - SSL: on
 
-Optional repository secrets:
+Useful links:
 
-- `BLOG_IMAP_SERVER`
-- `BLOG_IMAP_PORT`
-- `BLOG_COMMENTS_BOOTSTRAP_SINCE`, for example `01-Jan-2026`
+- GitHub Actions secrets: <https://github.com/Laurentdiao/laurentdiao.github.io/settings/secrets/actions>
+- New GitHub secret: <https://github.com/Laurentdiao/laurentdiao.github.io/settings/secrets/actions/new>
+- Google account security: <https://myaccount.google.com/security>
+- Google app passwords: <https://myaccount.google.com/apppasswords>
+- Gmail forwarding and IMAP settings: <https://mail.google.com/mail/u/0/#settings/fwdandpop>
+- Gmail IMAP official help: <https://support.google.com/mail/answer/7126229>
 
-## Local Comments
+## What to check
+
+1. Sign in to the Google account `dwinnie137@gmail.com`.
+2. Open Google account security and turn on 2-Step Verification.
+3. Open Google app passwords and create a new app password for Mail.
+4. Copy the generated 16-character app password.
+5. In GitHub Actions secrets, set `BLOG_EMAIL` to `dwinnie137@gmail.com`.
+6. Set `BLOG_EMAIL_PASSWORD` to the Google app password.
+7. In Gmail settings, open Forwarding and POP/IMAP and make sure IMAP is enabled.
+8. Run the `Fetch Email Comments` workflow manually.
+
+The script removes ordinary spaces, newlines, and hidden separators from the app password before logging in. If Google shows the password grouped like `abcd efgh ijkl mnop`, pasting it with spaces is okay.
+
+## Workflow diagnostics
+
+When the workflow starts, it prints safe diagnostics:
+
+- `BLOG_EMAIL` is masked but should end with `@gmail.com`.
+- `BLOG_EMAIL_PASSWORD length after cleanup` should usually be `16`.
+- If the password length is `0`, the repository secret was not passed to the workflow.
+- If the password length is much longer than `16`, it is probably not the Google app password.
+- If the diagnostics look correct but `AUTHENTICATE failed` still appears, create a fresh Google app password and confirm IMAP is enabled in Gmail settings.
+
+## Local comments
 
 Comments are fetched by GitHub Actions and committed back into the repository. Before checking comments locally with `npx hexo server`, run:
 
@@ -43,4 +56,4 @@ git pull --ff-only origin main
 npx hexo server
 ```
 
-That pull brings down the latest `source/data/comments.json` and `.github/comments_state.json`.
+Or double-click `tools/review.command`; it pulls latest comments and opens the local preview after Hexo is ready.

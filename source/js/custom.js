@@ -1,6 +1,6 @@
 // custom.js - 评论按钮 + 朋友圈样式 + 阅读进度 + 你好标题
 document.addEventListener('DOMContentLoaded', function () {
-  var COMMENT_EMAIL = 'gergptdd@hotmail.com';
+  var COMMENT_EMAIL = 'dwinnie137@gmail.com';
   var isPost = !!document.getElementById('article-container');
   var isHome = !!document.getElementById('recent-posts');
 

@@ -26,6 +26,8 @@ jobs:
         env:
           BLOG_EMAIL: ${{ secrets.BLOG_EMAIL }}
           BLOG_EMAIL_PASSWORD: ${{ secrets.BLOG_EMAIL_PASSWORD }}
+          BLOG_IMAP_SERVER: imap.gmail.com
+          BLOG_IMAP_PORT: '993'
         run: python .github/scripts/fetch_comments.py
 
       - name: Commit Comments
