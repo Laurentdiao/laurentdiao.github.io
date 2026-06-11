@@ -28,11 +28,15 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Laurentdiao/laurentdiao.github.io.git"
+          if [ ! -f source/data/comments.json ]; then
+            echo "{}" > source/data/comments.json
+          fi
           git add source/data/comments.json
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
+          if git diff --cached --quiet; then
+            echo "No changes, skipping commit"
           else
-            git commit -m "📬 Update comments"
+            git commit -m "Update comments"
+            git pull --rebase origin main
             git push
           fi
 
