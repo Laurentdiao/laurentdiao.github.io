@@ -82,6 +82,11 @@ body {
 
 #toggle-menu { display: none !important; }
 
+/* 手机端也强制隐藏汉堡菜单 */
+#page-header #toggle-menu,
+#nav #toggle-menu,
+#menus #toggle-menu { display: none !important; }
+
 #nav .menus_items .menus_item a {
   font-size: 0.88em;
   color: var(--text-light);
