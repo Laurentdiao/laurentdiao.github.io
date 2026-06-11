@@ -27,8 +27,14 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Laurentdiao/laurentdiao.github.io.git"
           git add source/data/comments.json
-          git diff --staged --quiet || (git commit -m "📬 Update comments" && git push)
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "📬 Update comments"
+            git push
+          fi
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
