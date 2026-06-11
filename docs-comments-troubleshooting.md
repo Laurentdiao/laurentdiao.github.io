@@ -14,6 +14,14 @@ Check these items in order:
 6. Create a fresh app password, update `BLOG_EMAIL_PASSWORD`, then run `Fetch Email Comments` manually.
 7. If login still fails, open Outlook web once to confirm the mailbox is not locked by a security challenge.
 
+When the workflow starts, it prints safe diagnostics:
+
+- `BLOG_EMAIL` is masked but should still show the correct domain.
+- `BLOG_EMAIL_PASSWORD length after cleanup` should usually be `16` for a Microsoft app password.
+- If the password length is `0`, the repository secret was not passed to the workflow.
+- If the password length is much longer than `16`, it is probably not the app password that Microsoft generated.
+- If the diagnostics look correct but `AUTHENTICATE failed` still appears, Microsoft is rejecting IMAP username/password login for that mailbox. Re-check Outlook.com IMAP access, account security prompts, and whether the account/tenant allows app passwords or basic IMAP authentication.
+
 Default IMAP settings used by the workflow:
 
 - Server: `outlook.office365.com`

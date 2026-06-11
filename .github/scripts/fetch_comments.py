@@ -18,7 +18,7 @@ from zoneinfo import ZoneInfo
 
 EMAIL = (os.environ.get("BLOG_EMAIL") or "").strip()
 RAW_PASSWORD = (os.environ.get("BLOG_EMAIL_PASSWORD") or "").strip()
-PASSWORD = RAW_PASSWORD.replace(" ", "")
+PASSWORD = re.sub(r"[\s\u200b\u200c\u200d\ufeff]+", "", RAW_PASSWORD)
 IMAP_SERVER = os.environ.get("BLOG_IMAP_SERVER", "outlook.office365.com").strip()
 IMAP_PORT = int(os.environ.get("BLOG_IMAP_PORT", "993"))
 BOOTSTRAP_SINCE = os.environ.get("BLOG_COMMENTS_BOOTSTRAP_SINCE", "01-Jan-2026").strip()
@@ -278,14 +278,34 @@ def auth_failed_message():
     return (
         "AUTHENTICATE failed. 请检查 GitHub Secrets 中的 BLOG_EMAIL 和 BLOG_EMAIL_PASSWORD："
         "BLOG_EMAIL 必须是完整邮箱；BLOG_EMAIL_PASSWORD 建议使用 Microsoft app password，"
-        "不要使用网页登录密码；如果复制的 app password 带空格，本脚本会自动去掉空格。"
+        "不要使用网页登录密码；如果复制的 app password 带空格、换行或隐藏分隔符，本脚本会自动去掉。"
+        "如果确认 secret 正确但仍失败，通常是 Outlook.com 禁用了 IMAP/basic auth 或触发了安全拦截。"
     )
+
+
+def mask_email(value):
+    if "@" not in value:
+        return "(invalid email format)"
+    local, domain = value.split("@", 1)
+    if not local:
+        return f"***@{domain}"
+    return f"{local[0]}***@{domain}"
+
+
+def print_auth_diagnostics():
+    print(f"🔎 IMAP server: {IMAP_SERVER}:{IMAP_PORT} SSL")
+    print(f"🔎 BLOG_EMAIL: {mask_email(EMAIL)}")
+    print(f"🔎 BLOG_EMAIL_PASSWORD length after cleanup: {len(PASSWORD)}")
+    if RAW_PASSWORD != PASSWORD:
+        print("🔎 BLOG_EMAIL_PASSWORD contained whitespace/hidden separators and was cleaned before login")
 
 
 def main():
     if not EMAIL or not PASSWORD:
         print("❌ 环境变量 BLOG_EMAIL 或 BLOG_EMAIL_PASSWORD 未设置")
         sys.exit(1)
+
+    print_auth_diagnostics()
 
     comments = normalize_comments(load_json(COMMENTS_FILE, {}))
     state = load_json(STATE_FILE, {"last_uid": 0})
