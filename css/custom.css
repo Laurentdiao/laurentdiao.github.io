@@ -705,6 +705,14 @@ body {
     margin-bottom: 10px;
   }
 
+  /* 右下角按钮缩小不遮挡内容 */
+  #rightside { bottom: 16px; right: 10px; }
+  #rightside > div > button {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8em;
+  }
+
   /* 文章正文 */
   .post-content {
     font-size: 16px;
