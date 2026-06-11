@@ -67,7 +67,13 @@ if [[ "$ADD_IMG" == "选择图片" ]]; then
   
   if [ -n "$IMG_PATH" ]; then
     mkdir -p source/images
-    IMG_NAME="img_$(date +%s).jpg"
+    EXT="${IMG_PATH##*.}"
+    EXT=$(echo "$EXT" | tr '[:upper:]' '[:lower:]')
+    case "$EXT" in
+      jpg|jpeg|png|gif|webp) ;;
+      *) EXT="jpg" ;;
+    esac
+    IMG_NAME="img_$(date +%s).${EXT}"
     cp "$IMG_PATH" "source/images/$IMG_NAME"
     CONTENT="$CONTENT
 

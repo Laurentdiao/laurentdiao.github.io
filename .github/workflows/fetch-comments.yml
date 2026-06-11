@@ -32,4 +32,4 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v7.1.0
         with:
           commit_message: 'Update comments'
-          file_pattern: 'source/data/comments.json'
+          file_pattern: 'source/data/comments.json .github/comments_state.json'

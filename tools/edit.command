@@ -103,6 +103,32 @@ if [[ "$ACTION" == "修改内容" || "$ACTION" == "全部修改" ]]; then
     echo "已取消"
     exit 0
   fi
+
+  ADD_IMG=$(osascript -e '
+    set imgChoice to button returned of (display dialog "需要插入图片吗？" buttons {"跳过", "选择图片"} default button "跳过")
+    return imgChoice
+  ' 2>/dev/null)
+
+  if [[ "$ADD_IMG" == "选择图片" ]]; then
+    IMG_PATH=$(osascript -e '
+      set imgFile to choose file of type {"public.image"} with prompt "选择图片："
+      return POSIX path of imgFile
+    ' 2>/dev/null)
+
+    if [ -n "$IMG_PATH" ]; then
+      mkdir -p source/images
+      EXT="${IMG_PATH##*.}"
+      EXT=$(echo "$EXT" | tr '[:upper:]' '[:lower:]')
+      case "$EXT" in
+        jpg|jpeg|png|gif|webp) ;;
+        *) EXT="jpg" ;;
+      esac
+      IMG_NAME="img_$(date +%s).${EXT}"
+      cp "$IMG_PATH" "source/images/$IMG_NAME"
+      printf '\n\n![](/images/%s)\n' "$IMG_NAME" >> "$FILEPATH"
+      echo "✅ 图片已添加: source/images/$IMG_NAME"
+    fi
+  fi
 fi
 
 # ── 确认发布 ──
