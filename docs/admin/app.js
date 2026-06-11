@@ -64,9 +64,7 @@
     if (state.token) {
       showNotice('已保存 token。点右上角刷新开始同步。', false);
     }
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/admin/sw.js?v=20260612c').catch(() => {});
-    }
+    clearAdminCaches();
   }
 
   function bindEvents() {
@@ -350,7 +348,7 @@
     localStorage.setItem(tokenKey, token);
     renderTokenState();
     setView('posts');
-    syncAll();
+    showNotice('Token 已保存。点右上角刷新开始同步。', false);
   }
 
   function clearToken() {
