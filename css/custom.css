@@ -27,7 +27,12 @@
 }
 
 /* ── 全局重置 ── */
+html {
+  font-size: 14px;
+  -webkit-text-size-adjust: 100%;
+}
 body {
+  font-size: 14px;
   background: var(--bg);
   font-family: var(--font-body);
   color: var(--text-body);
