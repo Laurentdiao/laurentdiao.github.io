@@ -53,6 +53,29 @@ if [ -z "$CONTENT" ]; then
   exit 0
 fi
 
+# ── 插入图片（可选） ──
+ADD_IMG=$(osascript -e '
+  set imgChoice to button returned of (display dialog "需要插入图片吗？" buttons {"跳过", "选择图片"} default button "跳过")
+  return imgChoice
+' 2>/dev/null)
+
+if [[ "$ADD_IMG" == "选择图片" ]]; then
+  IMG_PATH=$(osascript -e '
+    set imgFile to choose file of type {"public.image"} with prompt "选择图片："
+    return POSIX path of imgFile
+  ' 2>/dev/null)
+  
+  if [ -n "$IMG_PATH" ]; then
+    mkdir -p source/images
+    IMG_NAME="img_$(date +%s).jpg"
+    cp "$IMG_PATH" "source/images/$IMG_NAME"
+    CONTENT="$CONTENT
+
+![](/images/$IMG_NAME)"
+    echo "✅ 图片已添加: source/images/$IMG_NAME"
+  fi
+fi
+
 # ── 选择标签 ──
 TAG=$(osascript -e '
   set theTags to {"随笔", "技术", "生活", "读书笔记", "朋友圈", "其他"}

@@ -1,17 +1,18 @@
 //
 //  MyBlogAppApp.swift
-//  MyBlogApp
-//
-//  Created by weili diao on 11/6/2026.
+//  MyBlogApp - Winnie's Blog Manager
 //
 
 import SwiftUI
 
 @main
 struct MyBlogAppApp: App {
+    @StateObject private var service = GitHubService()
+
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(service)
         }
     }
 }
