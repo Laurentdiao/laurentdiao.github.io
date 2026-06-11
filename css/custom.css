@@ -647,7 +647,7 @@ body {
 #footer {
   text-align: center;
   font-size: 0.78em;
-  color: #6b5e52;
+  color: #3d3229;
   padding: 50px 20px 60px;
   background: transparent;
 }
@@ -665,7 +665,7 @@ body {
 }
 .email-contact .email-icon { font-size: 1.6em; margin-bottom: 6px; }
 .email-contact p {
-  color: var(--text-light);
+  color: #4a4038;
   font-size: 0.95em;
   margin: 4px 0 10px;
   text-indent: 0;
