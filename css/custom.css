@@ -1,0 +1,230 @@
+/* ===== 全局 ===== */
+body {
+  background: #f8f9fa;
+}
+
+/* ===== 导航栏 ===== */
+#nav {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px 24px;
+}
+
+#nav #site-name {
+  font-size: 1.3em;
+  font-weight: 700;
+  color: #1a1a2e;
+  letter-spacing: -0.5px;
+}
+
+#nav .menus_items .menus_item a {
+  font-size: 0.95em;
+  color: #555;
+  transition: color 0.2s;
+}
+#nav .menus_items .menus_item a:hover {
+  color: #0073e6;
+}
+
+/* ===== 首页英雄区 ===== */
+#page-header {
+  display: block !important;
+  height: auto !important;
+  min-height: 200px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  margin-bottom: 0;
+}
+
+#page-header #site-info {
+  text-align: center;
+  padding: 50px 20px 40px;
+}
+
+#page-header #site-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+#page-header #site-subtitle {
+  font-size: 1em;
+  color: rgba(255,255,255,0.85);
+  font-weight: 300;
+}
+
+/* 文章页 header 简化 */
+.layout-post #page-header {
+  min-height: auto;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+.layout-post #page-header #site-info {
+  padding: 30px 20px;
+}
+.layout-post #page-header #site-title {
+  font-size: 1.5em;
+}
+
+/* ===== 主内容区 ===== */
+#content-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.layout {
+  max-width: 100%;
+}
+
+.layout > div:first-child:not(.aside-content) {
+  width: 100%;
+}
+
+/* ===== 文章卡片 ===== */
+.recent-post-item {
+  background: #fff;
+  border-radius: 12px;
+  padding: 28px 30px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.recent-post-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.recent-post-item .article-title {
+  margin-bottom: 10px;
+}
+
+.recent-post-item .article-title a {
+  font-size: 1.25em;
+  font-weight: 600;
+  color: #1a1a2e;
+  text-decoration: none;
+  line-height: 1.4;
+  transition: color 0.2s;
+}
+.recent-post-item .article-title a:hover {
+  color: #667eea;
+}
+
+/* 文章元信息 */
+.recent-post-item .article-meta {
+  color: #999;
+  font-size: 0.85em;
+  margin-top: 6px;
+}
+.recent-post-item .article-meta a {
+  color: #888;
+}
+.recent-post-item .article-meta a:hover {
+  color: #667eea;
+}
+
+.recent-post-item .article-meta .post-meta-date,
+.recent-post-item .article-meta .post-meta-categories,
+.recent-post-item .article-meta .post-meta-tags {
+  margin-right: 12px;
+}
+
+/* 文章摘要 */
+.recent-post-item .content {
+  color: #666;
+  font-size: 0.95em;
+  line-height: 1.7;
+  margin-top: 12px;
+}
+
+/* ===== 文章页 ===== */
+.post-content {
+  font-size: 16px;
+  line-height: 1.85;
+  color: #333;
+}
+
+.post-content h2 {
+  font-size: 1.5em;
+  margin-top: 2em;
+  margin-bottom: 0.6em;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #eee;
+}
+
+.post-content h3 {
+  font-size: 1.2em;
+  margin-top: 1.5em;
+}
+
+.post-content a {
+  color: #667eea;
+  text-decoration: none;
+  border-bottom: 1px solid #667eea;
+}
+.post-content a:hover {
+  color: #764ba2;
+  border-bottom-color: #764ba2;
+}
+
+.post-content code {
+  background: #f0f0f5;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #e83e8c;
+}
+
+.post-content pre {
+  background: #1e1e2e;
+  border-radius: 10px;
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.post-content pre code {
+  background: none;
+  padding: 0;
+  color: #cdd6f4;
+}
+
+/* ===== 隐藏侧边栏 ===== */
+#aside-content {
+  display: none !important;
+}
+
+/* ===== 底部 ===== */
+#footer {
+  text-align: center;
+  font-size: 0.85em;
+  color: #aaa;
+  padding: 30px 20px 40px;
+  background: transparent;
+}
+
+/* ===== 移动端适配 ===== */
+@media screen and (max-width: 768px) {
+  #page-header {
+    min-height: 160px;
+  }
+  #page-header #site-title {
+    font-size: 1.7em;
+  }
+  #page-header #site-info {
+    padding: 40px 20px 30px;
+  }
+  #content-inner {
+    max-width: 100%;
+    padding: 24px 16px;
+  }
+  #nav {
+    padding: 12px 16px;
+  }
+  .recent-post-item {
+    padding: 20px 18px;
+  }
+  .recent-post-item .article-title a {
+    font-size: 1.1em;
+  }
+}
