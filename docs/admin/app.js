@@ -51,16 +51,21 @@
   document.addEventListener('DOMContentLoaded', init);
 
   function init() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('reset')) {
+      state.token = '';
+      localStorage.removeItem(tokenKey);
+      clearAdminCaches();
+    }
     renderTags();
     bindEvents();
     renderTokenState();
     setView(state.token ? 'posts' : 'settings');
-    const params = new URLSearchParams(window.location.search);
-    if (state.token && !params.has('nosync')) {
-      syncAll();
+    if (state.token) {
+      showNotice('已保存 token。点右上角刷新开始同步。', false);
     }
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/admin/sw.js?v=20260612b').catch(() => {});
+      navigator.serviceWorker.register('/admin/sw.js?v=20260612c').catch(() => {});
     }
   }
 
@@ -351,6 +356,7 @@
   function clearToken() {
     state.token = '';
     localStorage.removeItem(tokenKey);
+    clearAdminCaches();
     state.posts = [];
     state.selectedPost = null;
     state.about = null;
@@ -448,6 +454,19 @@
   function clearNotice() {
     elements.notice.hidden = true;
     elements.notice.textContent = '';
+  }
+
+  function clearAdminCaches() {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations()
+        .then((registrations) => registrations.forEach((registration) => registration.unregister()))
+        .catch(() => {});
+    }
+    if ('caches' in window) {
+      caches.keys()
+        .then((keys) => keys.filter((key) => key.startsWith('winnie-blog-admin')).forEach((key) => caches.delete(key)))
+        .catch(() => {});
+    }
   }
 
   function parseMarkdown(markdown) {
