@@ -684,21 +684,44 @@ body {
 #footer {
   text-align: center;
   font-size: 0.78em;
-  color: var(--text-muted);
+  color: #6b5e52;
   padding: 50px 20px 60px;
   background: transparent;
 }
 #footer a { color: var(--accent); text-decoration: none; }
 
-.busuanzi-footer {
-  margin-top: 12px;
-  font-size: 0.85em;
-  color: #c8b8a8;
+/* 发邮件模块（在 footer 内部、copyright 上方） */
+.email-contact {
+  max-width: 700px;
+  margin: 0 auto 24px;
+  text-align: center;
+  padding: 24px 20px;
+  background: linear-gradient(135deg, #fefaf6, #fef4ed);
+  border-radius: var(--radius);
+  border: 1px solid #f0e0d2;
 }
-.busuanzi-footer #busuanzi_value_site_uv,
-.busuanzi-footer #busuanzi_value_site_pv {
+.email-contact .email-icon { font-size: 1.6em; margin-bottom: 6px; }
+.email-contact p {
   color: var(--text-light);
+  font-size: 0.95em;
+  margin: 4px 0 10px;
+  text-indent: 0;
+}
+.email-contact a {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  padding: 8px 22px;
+  border-radius: 20px;
+  font-size: 0.9em;
   font-weight: 600;
+  text-decoration: none;
+  transition: all var(--transition);
+}
+.email-contact a:hover {
+  background: var(--accent-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(212,132,95,0.3);
 }
 
 /* ==========================================
