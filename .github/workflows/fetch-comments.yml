@@ -1,5 +1,8 @@
 name: Fetch Email Comments
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 on:
   schedule:
     - cron: '*/5 * * * *'
@@ -11,9 +14,11 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6.0.3
+        with:
+          submodules: false
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6.2.0
         with:
           python-version: '3.12'
 
@@ -24,7 +29,7 @@ jobs:
         run: python .github/scripts/fetch_comments.py
 
       - name: Commit Comments
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7.1.0
         with:
           commit_message: 'Update comments'
           file_pattern: 'source/data/comments.json'

@@ -4,14 +4,20 @@
 
 /* ── CSS 变量 ── */
 :root {
-  --bg: #fdf6f0;
+  --bg: #f7f1eb;
+  --bg-soft: #fbf8f3;
   --card-bg: #ffffff;
   --text: #3d3229;
   --text-body: #4a4038;
   --text-light: #8c7b6e;
   --text-muted: #b5a69a;
-  --accent: #d4845f;
-  --accent-dark: #b86a45;
+  --accent: #cf7d59;
+  --accent-dark: #a95f43;
+  --accent-soft: #f2d5c4;
+  --blue-soft: #edf4f8;
+  --blue-text: #4d7187;
+  --sage-soft: #eef3ed;
+  --sage-text: #637b63;
   --tag-bg: #fef0e7;
   --tag-text: #c07850;
   --border: #efe4d8;
@@ -33,7 +39,9 @@ html {
 }
 body {
   font-size: 14px;
-  background: var(--bg);
+  background:
+    linear-gradient(180deg, rgba(251,248,243,0.96), rgba(247,241,235,0.98) 320px),
+    var(--bg);
   font-family: var(--font-body);
   color: var(--text-body);
   -webkit-font-smoothing: antialiased;
@@ -54,7 +62,7 @@ body {
   top: auto !important;
   max-width: 700px;
   margin: 0 auto;
-  padding: 16px 0;
+  padding: 18px 0;
   background: transparent !important;
   display: flex !important;
   justify-content: space-between;
@@ -70,7 +78,7 @@ body {
   color: var(--text) !important;
   font-size: 1.15em;
   font-weight: 700;
-  letter-spacing: -0.3px;
+  letter-spacing: 0;
   text-decoration: none;
 }
 
@@ -112,38 +120,34 @@ body {
 #page-header {
   display: block !important;
   height: auto !important;
-  min-height: 200px;
-  background: linear-gradient(155deg, #fce4d6 0%, #f5cbb0 35%, #e8b89a 70%, #d8a088 100%) !important;
+  min-height: 210px;
+  background:
+    linear-gradient(115deg, rgba(255,255,255,0.16) 0 1px, transparent 1px 18px),
+    linear-gradient(145deg, #f6dfd1 0%, #eec4aa 42%, #d29479 100%) !important;
   margin-bottom: 0;
   position: relative;
   overflow: hidden;
 }
 
-/* 装饰光晕 */
+/* 细腻背景层次 */
 #page-header::before {
   content: '';
   position: absolute;
-  top: -80px;
-  right: -60px;
-  width: 260px;
-  height: 260px;
-  background: rgba(255,255,255,0.12);
-  border-radius: 50%;
+  inset: auto 0 0;
+  height: 1px;
+  background: rgba(255,255,255,0.34);
 }
 #page-header::after {
   content: '';
   position: absolute;
-  bottom: -40px;
-  left: -30px;
-  width: 160px;
-  height: 160px;
-  background: rgba(255,255,255,0.08);
-  border-radius: 50%;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 0%, rgba(129,82,58,0.08) 100%);
+  pointer-events: none;
 }
 
 #page-header #site-info {
   text-align: center;
-  padding: 50px 20px 42px;
+  padding: 54px 20px 46px;
   position: relative;
   z-index: 1;
 }
@@ -153,7 +157,7 @@ body {
   font-weight: 800;
   color: #fff;
   margin-bottom: 10px;
-  letter-spacing: 1px;
+  letter-spacing: 0;
   text-shadow: 0 2px 10px rgba(0,0,0,0.06);
 }
 
@@ -161,7 +165,7 @@ body {
   font-size: 0.92em;
   color: rgba(255,255,255,0.82);
   font-weight: 400;
-  letter-spacing: 2px;
+  letter-spacing: 0;
 }
 
 /* 社交图标 */
@@ -190,19 +194,34 @@ body {
 #content-inner {
   max-width: 700px;
   margin: 0 auto;
-  padding: 36px 0 20px;
+  padding: 34px 0 20px;
 }
 
 .layout { max-width: 100%; }
 .layout > div:first-child:not(.aside-content) { width: 100%; }
+
+#recent-posts,
+#post,
+#page {
+  background: transparent;
+}
+
+#post,
+#page {
+  padding: 30px 34px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.82);
+  box-shadow: var(--shadow);
+}
 
 /* ==========================================
    文章卡片 (首页)
    ========================================== */
 .recent-post-item {
   background: var(--card-bg);
-  border-radius: var(--radius);
-  padding: 26px 30px 22px;
+  border-radius: 12px;
+  padding: 28px 30px 24px;
   margin-bottom: 20px;
   box-shadow: var(--shadow);
   transition: transform var(--transition), box-shadow var(--transition);
@@ -222,7 +241,7 @@ body {
   opacity: 0;
   transition: opacity var(--transition);
 }
-.recent-post-item:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.recent-post-item:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
 .recent-post-item:hover::before { opacity: 1; }
 
 /* 标题 */
@@ -261,10 +280,6 @@ body {
 #post .article-meta__categories,
 .layout-post .article-meta__categories,
 .post-meta-categories { display: none !important; }
-  color: var(--accent);
-  font-weight: 500;
-  text-decoration: none;
-}
 
 .recent-post-item .article-meta .post-meta-categories a,
 .recent-post-item .article-meta .article-meta__categories {
@@ -277,8 +292,8 @@ body {
   text-decoration: none;
 }
 .recent-post-item .article-meta .article-meta__tags a {
-  background: linear-gradient(135deg, #f0f0f5, #e8e8f0);
-  color: #7a7a95;
+  background: linear-gradient(135deg, var(--sage-soft), #e3ece8);
+  color: var(--sage-text);
   padding: 2px 10px;
   border-radius: 10px;
   font-size: 0.9em;
@@ -296,11 +311,15 @@ body {
   margin-top: 12px;
 }
 
+.recent-post-item .content p {
+  margin: 0.45em 0 0;
+}
+
 /* ==========================================
    朋友圈 / 短文风格
    ========================================== */
 .recent-post-item.moment-style {
-  border-radius: var(--radius-lg);
+  border-radius: 16px;
   padding: 20px 24px;
   margin-bottom: 14px;
   border: 1.5px solid #f0e0d2;
@@ -344,13 +363,19 @@ body {
   line-height: 1.78;
   color: var(--text-body);
   font-weight: 400;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
   word-break: break-word;
+}
+
+#post .post-title,
+#page .page-title {
+  color: var(--text);
+  line-height: 1.35;
 }
 
 /* ── 段落 ── */
 .post-content p {
-  margin: 0.8em 0;
+  margin: 0.82em 0;
   text-indent: 2em;
 }
 /* 首段 / 紧跟在标题后的段落不缩进 */
@@ -425,7 +450,7 @@ body {
 .post-content blockquote {
   margin: 1.8em 0;
   padding: 18px 24px;
-  background: linear-gradient(135deg, #fefaf6, #fef6f0);
+  background: linear-gradient(135deg, #fffaf6, #fff4eb);
   border-left: 4px solid var(--accent);
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   color: var(--text-light);
@@ -548,7 +573,7 @@ body {
    ========================================== */
 #post-info {
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 22px;
 }
 #post-info .post-meta-date {
   color: var(--text-muted);
@@ -560,8 +585,8 @@ body {
   text-align: center;
   color: var(--text-muted);
   font-size: 0.8em;
-  margin-bottom: 28px;
-  padding-bottom: 20px;
+  margin-bottom: 30px;
+  padding-bottom: 18px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -580,6 +605,7 @@ body {
   transition: opacity 0.2s;
 }
 .post-footer-nav a:hover { opacity: 0.7; }
+.post-footer-nav a::before { content: '< '; }
 
 /* 邮件评论系统 */
 .comment-btn-wrap {
@@ -589,13 +615,18 @@ body {
   border-top: 1px solid var(--border);
 }
 .comment-btn {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   background: var(--accent);
   color: #fff !important;
-  padding: 10px 28px;
-  border-radius: 22px;
+  min-height: 42px;
+  padding: 0 28px;
+  border-radius: 999px;
   font-size: 0.95em;
   font-weight: 600;
+  line-height: 1;
   text-decoration: none;
   transition: all var(--transition);
   border-bottom: none;
@@ -605,12 +636,23 @@ body {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(212,132,95,0.3);
 }
+.comment-btn-icon,
+.comment-btn-label {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+.comment-btn-icon {
+  justify-content: center;
+  width: 1.1em;
+  font-size: 1.05em;
+}
 .comments-display { max-width: 700px; margin: 24px auto 0; }
 .comments-display h3 { font-size: 1.1em; color: var(--text); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); }
 .comment-item { background: var(--card-bg); border-radius: var(--radius-sm); padding: 16px 20px; margin-bottom: 12px; border: 1px solid var(--border); }
 .comment-item .comment-user { font-weight: 700; color: var(--accent); font-size: 0.9em; }
 .comment-item .comment-date { color: var(--text-muted); font-size: 0.75em; margin-left: 8px; font-weight: 400; }
-.comment-item .comment-text { color: var(--text-light); font-size: 0.9em; line-height: 1.7; margin-top: 4px; }
+.comment-item .comment-text { color: var(--text-light); font-size: 0.9em; line-height: 1.7; margin-top: 6px; white-space: pre-wrap; }
 
 /* Giscus 评论区域 */
 #giscus {
@@ -691,7 +733,7 @@ body {
   text-align: center;
   font-size: 0.78em;
   color: #3d3229;
-  padding: 50px 20px 60px;
+  padding: 46px 20px 58px;
   background: transparent;
 }
 #footer a { color: var(--accent); text-decoration: none; }
@@ -728,7 +770,13 @@ body {
   /* 内容区 */
   #content-inner {
     max-width: 100%;
-    padding: 20px 14px 10px;
+    padding: 18px 14px 10px;
+  }
+
+  #post,
+  #page {
+    padding: 22px 18px;
+    border-radius: 12px;
   }
 
   /* 卡片 */
@@ -759,12 +807,12 @@ body {
   /* 文章正文 */
   .post-content {
     font-size: 16px;
-    line-height: 1.85;
+    line-height: 1.76;
   }
   .post-content h1 { font-size: 1.4em; margin-top: 1.8em; }
   .post-content h2 { font-size: 1.2em; margin-top: 1.6em; }
   .post-content h3 { font-size: 1.05em; }
-  .post-content p { margin: 0.8em 0; text-indent: 1.8em; }
+  .post-content p { margin: 0.78em 0; text-indent: 1.5em; }
   .post-content blockquote { padding: 14px 18px; }
   .post-content blockquote::before { font-size: 2em; top: -6px; left: 8px; }
   .post-content pre { padding: 16px 18px; border-radius: 10px; }
@@ -791,9 +839,11 @@ body {
   #nav .nav-site-title { font-size: 1em; }
   #nav .menus_items .menus_item a { padding: 5px 10px; font-size: 0.82em; }
   #content-inner { padding: 16px 12px 8px; }
+  #post,
+  #page { padding: 20px 15px; }
   .recent-post-item { padding: 16px 14px; }
   .recent-post-item .article-title a { font-size: 1em; }
-  .post-content { font-size: 15px; line-height: 1.8; }
+  .post-content { font-size: 15px; line-height: 1.74; }
   .post-content h1 { font-size: 1.3em; }
   .post-content h2 { font-size: 1.1em; }
   .post-content p { text-indent: 1.6em; }
