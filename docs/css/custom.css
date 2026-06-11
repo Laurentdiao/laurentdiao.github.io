@@ -653,6 +653,47 @@ body {
 .comment-item .comment-user { font-weight: 700; color: var(--accent); font-size: 0.9em; }
 .comment-item .comment-date { color: var(--text-muted); font-size: 0.75em; margin-left: 8px; font-weight: 400; }
 .comment-item .comment-text { color: var(--text-light); font-size: 0.9em; line-height: 1.7; margin-top: 6px; white-space: pre-wrap; }
+.comment-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+.comment-reply-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 28px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-soft);
+  color: var(--accent) !important;
+  font-size: 0.8em;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  transition: all var(--transition);
+}
+.comment-reply-btn:hover {
+  border-color: var(--accent-soft);
+  background: var(--tag-bg);
+}
+.comment-replies {
+  margin-top: 12px;
+  padding-left: 16px;
+  border-left: 2px solid var(--border);
+}
+.comment-reply {
+  padding: 12px 0 10px 14px;
+  border-top: 1px dashed var(--border);
+}
+.comment-reply:first-child {
+  border-top: none;
+  padding-top: 2px;
+}
+.comment-reply .comment-user { color: var(--sage-text); }
+.comment-reply .comment-text { color: var(--text-light); font-size: 0.88em; line-height: 1.68; margin-top: 5px; white-space: pre-wrap; }
 
 /* Giscus 评论区域 */
 #giscus {
