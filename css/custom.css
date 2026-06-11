@@ -606,6 +606,8 @@ body {
    隐藏不需要的元素
    ========================================== */
 #aside-content { display: none !important; }
+#sidebar { display: none !important; }
+#menu-mask { display: none !important; }
 #post .post-copyright,
 #post .post-outdate-notice,
 #post .relatedPosts,
