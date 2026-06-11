@@ -557,9 +557,10 @@ body {
 
 /* 发邮件给我 */
 .email-contact {
+  max-width: 700px;
+  margin: 0 auto 16px;
   text-align: center;
-  margin: 36px 0 20px;
-  padding: 24px 20px;
+  padding: 28px 20px;
   background: linear-gradient(135deg, #fefaf6, #fef4ed);
   border-radius: var(--radius);
   border: 1px solid #f0e0d2;
