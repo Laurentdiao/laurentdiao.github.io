@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  fetch-and-deploy:
+  fetch-comments:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -23,21 +23,8 @@ jobs:
           BLOG_EMAIL_PASSWORD: ${{ secrets.BLOG_EMAIL_PASSWORD }}
         run: python .github/scripts/fetch_comments.py
 
-      - uses: actions/setup-node@v4
+      - name: Commit Comments
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          node-version: '20'
-
-      - run: npm install
-
-      - run: npx hexo generate
-
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
-          publish_branch: main
-          force_orphan: true
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
-          commit_message: 'Site updated'
+          commit_message: 'Update comments'
+          file_pattern: 'source/data/comments.json'

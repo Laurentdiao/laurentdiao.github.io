@@ -4,29 +4,32 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'source/**'
+      - '_config.yml'
+      - '_config.butterfly.yml'
+      - 'themes/**'
+      - 'scaffolds/**'
+      - 'package.json'
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: true
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Install Dependencies
-        run: npm install
+      - run: npm install
 
-      - name: Generate Static Files
-        run: npx hexo generate
+      - run: npx hexo generate
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
