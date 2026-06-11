@@ -5,7 +5,7 @@
 import SwiftUI
 import PhotosUI
 
-enum EditorMode: Identifiable {
+enum EditorMode: Identifiable, Equatable {
     case create, edit(Post)
     var id: String {
         switch self {
@@ -13,6 +13,7 @@ enum EditorMode: Identifiable {
         case .edit(let p): return p.id.uuidString
         }
     }
+    static func == (lhs: EditorMode, rhs: EditorMode) -> Bool { lhs.id == rhs.id }
 }
 
 struct PostEditorView: View {

@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct Post: Identifiable, Codable {
+struct Post: Identifiable, Codable, Equatable {
     let id = UUID()
     var title: String
     var date: String
