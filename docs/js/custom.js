@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
       cb.className = 'comment-btn-wrap';
       cb.innerHTML = '<a class="comment-btn" href="mailto:gergptdd@hotmail.com?subject=%5B%E8%AF%84%E8%AE%BA%5D%20' 
         + encodeURIComponent(t2) 
-        + '&body=%E7%94%A8%E6%88%B7%E5%90%8D%EF%BC%9A%0A%E8%AF%84%E8%AE%BA%E5%86%85%E5%AE%B9%EF%BC%9A%0A">📧 写评论</a>';
+        + '&body=%E7%94%A8%E6%88%B7%E5%90%8D%EF%BC%9A%0A%E8%AF%84%E8%AE%BA%E5%86%85%E5%AE%B9%EF%BC%9A%0A"><span class="comment-btn-icon" aria-hidden="true">📧</span><span class="comment-btn-label">写评论</span></a>';
       pc.appendChild(cb);
 
       // 加载已有评论
@@ -79,11 +79,31 @@ document.addEventListener('DOMContentLoaded', function () {
         if (key && data[key] && data[key].length > 0) {
           var cd = document.createElement('div');
           cd.className = 'comments-display';
-          cd.innerHTML = '<h3>💬 评论 (' + data[key].length + ')</h3>';
+
+          var heading = document.createElement('h3');
+          heading.textContent = '💬 评论 (' + data[key].length + ')';
+          cd.appendChild(heading);
+
           data[key].forEach(function (c) {
-            cd.innerHTML += '<div class="comment-item"><div class="comment-user">' + c.user 
-              + '<span class="comment-date">' + c.date + '</span></div><div class="comment-text">' 
-              + c.content + '</div></div>';
+            var item = document.createElement('div');
+            item.className = 'comment-item';
+
+            var user = document.createElement('div');
+            user.className = 'comment-user';
+            user.appendChild(document.createTextNode(c.user || '匿名'));
+
+            var date = document.createElement('span');
+            date.className = 'comment-date';
+            date.textContent = c.date || '';
+            user.appendChild(date);
+
+            var text = document.createElement('div');
+            text.className = 'comment-text';
+            text.textContent = c.content || '';
+
+            item.appendChild(user);
+            item.appendChild(text);
+            cd.appendChild(item);
           });
           var pc3 = document.querySelector('.post-content');
           if (pc3) pc3.appendChild(cd);
