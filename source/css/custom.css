@@ -27,7 +27,12 @@
 }
 
 /* ── 全局重置 ── */
+html {
+  font-size: 14px;
+  -webkit-text-size-adjust: 100%;
+}
 body {
+  font-size: 14px;
   background: var(--bg);
   font-family: var(--font-body);
   color: var(--text-body);
@@ -81,6 +86,11 @@ body {
 }
 
 #toggle-menu { display: none !important; }
+
+/* 手机端也强制隐藏汉堡菜单 */
+#page-header #toggle-menu,
+#nav #toggle-menu,
+#menus #toggle-menu { display: none !important; }
 
 #nav .menus_items .menus_item a {
   font-size: 0.88em;
@@ -606,6 +616,8 @@ body {
    隐藏不需要的元素
    ========================================== */
 #aside-content { display: none !important; }
+#sidebar { display: none !important; }
+#menu-mask { display: none !important; }
 #post .post-copyright,
 #post .post-outdate-notice,
 #post .relatedPosts,
@@ -647,22 +659,11 @@ body {
 #footer {
   text-align: center;
   font-size: 0.78em;
-  color: var(--text-muted);
+  color: #3d3229;
   padding: 50px 20px 60px;
   background: transparent;
 }
 #footer a { color: var(--accent); text-decoration: none; }
-
-.busuanzi-footer {
-  margin-top: 12px;
-  font-size: 0.85em;
-  color: #c8b8a8;
-}
-.busuanzi-footer #busuanzi_value_site_uv,
-.busuanzi-footer #busuanzi_value_site_pv {
-  color: var(--text-light);
-  font-weight: 600;
-}
 
 /* ==========================================
    滚动条
@@ -714,6 +715,14 @@ body {
     padding: 16px 18px;
     border-radius: 16px;
     margin-bottom: 10px;
+  }
+
+  /* 右下角按钮缩小不遮挡内容 */
+  #rightside { bottom: 16px; right: 10px; }
+  #rightside > div > button {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8em;
   }
 
   /* 文章正文 */

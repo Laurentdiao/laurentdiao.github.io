@@ -4,7 +4,7 @@
 
 # Site
 title: Winnie's Blog
-subtitle: '个人技术博客'
+subtitle: '个人生活博客'
 description: '记录学习与生活的个人博客'
 keywords: blog, tech, personal
 author: Winnie
@@ -103,4 +103,4 @@ theme: butterfly
 deploy:
   type: git
   repo: https://github.com/Laurentdiao/laurentdiao.github.io.git
-  branch: gh-pages
+  branch: main
