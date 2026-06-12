@@ -15,7 +15,7 @@ from email.utils import parsedate_to_datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from subscription_crypto import load_subscribers, save_subscribers
+from subscription_crypto import SUBSCRIBERS_FILE, load_subscribers, save_subscribers
 
 EMAIL = (os.environ.get("BLOG_EMAIL") or "").strip()
 RAW_PASSWORD = (os.environ.get("BLOG_EMAIL_PASSWORD") or "").strip()
@@ -83,6 +83,12 @@ def load_json(path, fallback):
 def save_json(path, data):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def ensure_encrypted_store(subscribers):
+    if not SUBSCRIBERS_FILE.exists():
+        save_subscribers(subscribers)
+        print("💾 已初始化加密订阅者列表")
 
 
 def parse_fields(body):
@@ -172,6 +178,7 @@ def main():
         return
 
     subscribers = load_subscribers()
+    ensure_encrypted_store(subscribers)
     state = load_json(STATE_FILE, {"last_uid": 0})
 
     try:

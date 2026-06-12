@@ -35,7 +35,24 @@ jobs:
         run: python .github/scripts/fetch_subscribers.py
 
       - name: Commit Subscribers
-        uses: stefanzweifel/git-auto-commit-action@v7.1.0
-        with:
-          commit_message: 'Update subscribers'
-          file_pattern: '.github/subscribers.enc .github/subscribers_state.json'
+        run: |
+          paths=()
+          [ -f .github/subscribers.enc ] && paths+=(.github/subscribers.enc)
+          [ -f .github/subscribers_state.json ] && paths+=(.github/subscribers_state.json)
+
+          if [ ${#paths[@]} -eq 0 ]; then
+            echo "No subscriber files were generated."
+            exit 0
+          fi
+
+          git add "${paths[@]}"
+          if git diff --cached --quiet; then
+            echo "No subscriber changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update subscribers"
+          git pull --rebase origin main
+          git push origin HEAD:main
