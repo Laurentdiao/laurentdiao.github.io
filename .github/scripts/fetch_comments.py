@@ -22,6 +22,7 @@ PASSWORD = re.sub(r"[\s\u200b\u200c\u200d\ufeff]+", "", RAW_PASSWORD)
 IMAP_SERVER = os.environ.get("BLOG_IMAP_SERVER", "imap.gmail.com").strip()
 IMAP_PORT = int(os.environ.get("BLOG_IMAP_PORT", "993"))
 BOOTSTRAP_SINCE = os.environ.get("BLOG_COMMENTS_BOOTSTRAP_SINCE", "01-Jan-2026").strip()
+LOOKBACK_COUNT = int(os.environ.get("BLOG_COMMENTS_LOOKBACK_COUNT", "50"))
 
 COMMENTS_FILE = "source/data/comments.json"
 STATE_FILE = ".github/comments_state.json"
@@ -122,6 +123,15 @@ def parse_template_fields(body):
     return fields
 
 
+def summarize_fields(fields):
+    names = []
+    for key in ("文章", "回复给", "回复ID", "用户名", "评论内容", "回复内容"):
+        value = fields.get(key, "")
+        if value:
+            names.append(f"{key}=yes")
+    return ", ".join(names) if names else "no template fields"
+
+
 def load_json(path, fallback):
     if os.path.exists(path):
         with open(path, "r", encoding="utf-8") as file:
@@ -218,8 +228,20 @@ def uid_search(mail, state):
         status, data = mail.uid("search", None, "SINCE", BOOTSTRAP_SINCE)
 
     if status != "OK" or not data or not data[0]:
-        return []
-    return [uid for uid in data[0].split() if int(uid) > last_uid]
+        new_uids = []
+    else:
+        new_uids = [uid for uid in data[0].split() if int(uid) > last_uid]
+
+    if LOOKBACK_COUNT <= 0:
+        return new_uids
+
+    status, data = mail.uid("search", None, "ALL")
+    if status != "OK" or not data or not data[0]:
+        return new_uids
+
+    recent_uids = data[0].split()[-LOOKBACK_COUNT:]
+    deduped = {int(uid): uid for uid in recent_uids + new_uids}
+    return [deduped[key] for key in sorted(deduped)]
 
 
 def fetch_message(mail, uid):
@@ -331,11 +353,13 @@ def main():
             max_uid = max(max_uid, int(uid))
             msg = fetch_message(mail, uid)
             if msg is None:
+                print(f"  ⚠️ UID {uid.decode(errors='replace')} 读取失败")
                 continue
 
             subject = decode_mime(msg.get("Subject"))
             kind, article_from_subject = parse_subject(subject)
             if not kind:
+                print(f"  · 跳过非评论邮件: {subject[:80] or '(无主题)'}")
                 continue
 
             message_id = (msg.get("Message-ID") or f"uid-{uid.decode()}").strip()
@@ -346,6 +370,7 @@ def main():
             body = extract_text_body(msg)
             fields = parse_template_fields(body)
             article = fields.get("文章") or article_from_subject
+            print(f"  🔎 解析邮件: {subject} ({summarize_fields(fields)})")
 
             if kind == "评论":
                 ok, detail = append_comment(comments, article, fields, msg, message_id)

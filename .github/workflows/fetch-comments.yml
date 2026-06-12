@@ -31,7 +31,15 @@ jobs:
         run: python .github/scripts/fetch_comments.py
 
       - name: Commit Comments
-        uses: stefanzweifel/git-auto-commit-action@v7.1.0
-        with:
-          commit_message: 'Update comments'
-          file_pattern: 'source/data/comments.json .github/comments_state.json'
+        run: |
+          git add source/data/comments.json .github/comments_state.json
+          if git diff --cached --quiet; then
+            echo "No comment changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update comments"
+          git pull --rebase origin main
+          git push origin HEAD:main
