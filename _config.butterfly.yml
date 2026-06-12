@@ -18,6 +18,8 @@ nav:
   fixed: false
 
 menu:
+  Visitor: /
+  Admin: /admin/
   About Me: /about/
 
 # --------------------------------------

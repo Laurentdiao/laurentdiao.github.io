@@ -8,9 +8,9 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Blog Admin">
   <title>Blog Admin</title>
-  <link rel="manifest" href="/admin/manifest.webmanifest?v=20260612e">
+  <link rel="manifest" href="/admin/manifest.webmanifest?v=20260612f">
   <link rel="apple-touch-icon" href="/img/butterfly-icon.png">
-  <link rel="stylesheet" href="/admin/styles.css?v=20260612e">
+  <link rel="stylesheet" href="/admin/styles.css?v=20260612f">
 </head>
 <body>
   <div class="app-shell">
@@ -51,6 +51,13 @@
           <h2 id="view-title">文章</h2>
         </div>
         <div class="topbar-actions">
+          <details class="admin-mode-menu">
+            <summary aria-label="打开菜单">☰</summary>
+            <div class="admin-mode-menu-list">
+              <a href="/">Visitor</a>
+              <a class="is-active" href="/admin/">Admin</a>
+            </div>
+          </details>
           <button id="refresh-btn" class="icon-btn" type="button" title="刷新">↻</button>
           <button id="new-post-btn" class="primary-btn" type="button">写文章</button>
         </div>
@@ -64,7 +71,7 @@
           <p>粘贴只给 <code>Laurentdiao/laurentdiao.github.io</code> 仓库 Contents 读写权限的 fine-grained token。</p>
           <label class="field-label" for="setup-token">GitHub Token</label>
           <input id="setup-token" class="input mono" type="password" autocomplete="off" placeholder="github_pat_...">
-          <button id="setup-save-btn" class="primary-btn full" type="button">保存并同步</button>
+          <button id="setup-save-btn" class="primary-btn full" type="button">保存 Token</button>
         </div>
       </section>
 
@@ -178,6 +185,6 @@
     <span>处理中</span>
   </div>
 
-  <script src="/admin/app.js?v=20260612e" defer></script>
+  <script src="/admin/app.js?v=20260612f" defer></script>
 </body>
 </html>

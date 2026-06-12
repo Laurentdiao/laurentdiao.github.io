@@ -167,6 +167,59 @@ code {
   gap: 10px;
 }
 
+.admin-mode-menu {
+  position: relative;
+}
+
+.admin-mode-menu summary {
+  width: 42px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  list-style: none;
+  font-weight: 800;
+}
+
+.admin-mode-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.admin-mode-menu-list {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 12;
+  min-width: 150px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.admin-mode-menu-list a {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 7px;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.admin-mode-menu-list a:hover,
+.admin-mode-menu-list a.is-active {
+  background: rgba(184, 95, 63, 0.12);
+  color: var(--accent-strong);
+}
+
 .primary-btn,
 .secondary-btn,
 .ghost-btn,

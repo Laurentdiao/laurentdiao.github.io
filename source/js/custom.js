@@ -1,8 +1,13 @@
 // custom.js - 评论按钮 + 朋友圈样式 + 阅读进度 + 你好标题
 document.addEventListener('DOMContentLoaded', function () {
   var COMMENT_EMAIL = 'dwinnie137@gmail.com';
+  var SUBSCRIBE_EMAIL = 'dwinnie137@gmail.com';
+  var SUBSCRIBE_STORAGE_KEY = 'winnie_blog_subscribe_email';
   var isPost = !!document.getElementById('article-container');
   var isHome = !!document.getElementById('recent-posts');
+
+  injectSubscribeButton();
+  bindMenuSubscribeInjection();
 
   // 首页：你好标题 + 朋友圈卡片样式
   if (isHome) {
@@ -97,6 +102,110 @@ document.addEventListener('DOMContentLoaded', function () {
   function buildMailto(subject, body) {
     return 'mailto:' + COMMENT_EMAIL +
       '?subject=' + encodeURIComponent(subject) +
+      '&body=' + encodeURIComponent(body).replace(/%0A/g, '%0D%0A');
+  }
+
+  function injectSubscribeButton() {
+    document.querySelectorAll('.menus_items').forEach(function (menus) {
+      if (menus.querySelector('.subscribe-nav-item')) return;
+      var item = document.createElement('div');
+      item.className = 'menus_item subscribe-nav-item';
+      var button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'site-page subscribe-nav-btn';
+      button.textContent = '订阅';
+      item.appendChild(button);
+      menus.appendChild(item);
+      button.addEventListener('click', openSubscribeDialog);
+    });
+  }
+
+  function bindMenuSubscribeInjection() {
+    var toggle = document.getElementById('toggle-menu');
+    if (!toggle) return;
+    toggle.addEventListener('click', function () {
+      window.setTimeout(injectSubscribeButton, 0);
+    });
+  }
+
+  function openSubscribeDialog() {
+    closeSubscribeDialog();
+
+    var overlay = document.createElement('div');
+    overlay.className = 'subscribe-modal';
+    overlay.id = 'subscribe-modal';
+    overlay.innerHTML = [
+      '<div class="subscribe-panel" role="dialog" aria-modal="true" aria-labelledby="subscribe-title">',
+      '<button class="subscribe-close" type="button" aria-label="关闭">×</button>',
+      '<p class="subscribe-eyebrow">Email Updates</p>',
+      '<h2 id="subscribe-title">订阅新文章</h2>',
+      '<p class="subscribe-copy">填写邮箱并选择想收到的文章类型。点击订阅后会打开邮件 App，请直接发送生成好的邮件。</p>',
+      '<label class="subscribe-label" for="subscribe-email">邮箱</label>',
+      '<input id="subscribe-email" class="subscribe-input" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com">',
+      '<div class="subscribe-label">文章类型</div>',
+      '<div class="subscribe-options">',
+      '<label><input type="radio" name="subscribe-type" value="长文"><span>长文</span></label>',
+      '<label><input type="radio" name="subscribe-type" value="短文"><span>短文</span></label>',
+      '<label><input type="radio" name="subscribe-type" value="both" checked><span>Both</span></label>',
+      '</div>',
+      '<p id="subscribe-error" class="subscribe-error" hidden></p>',
+      '<button id="subscribe-submit" class="subscribe-submit" type="button">订阅</button>',
+      '<p class="subscribe-note">邮箱不会公开显示在网站或 GitHub 代码中。</p>',
+      '</div>'
+    ].join('');
+
+    document.body.appendChild(overlay);
+    var input = document.getElementById('subscribe-email');
+    input.value = localStorage.getItem(SUBSCRIBE_STORAGE_KEY) || '';
+    input.focus();
+
+    overlay.addEventListener('click', function (event) {
+      if (event.target === overlay) closeSubscribeDialog();
+    });
+    overlay.querySelector('.subscribe-close').addEventListener('click', closeSubscribeDialog);
+    overlay.querySelector('#subscribe-submit').addEventListener('click', submitSubscribe);
+    document.addEventListener('keydown', closeSubscribeOnEscape);
+  }
+
+  function closeSubscribeDialog() {
+    var modal = document.getElementById('subscribe-modal');
+    if (modal) modal.remove();
+    document.removeEventListener('keydown', closeSubscribeOnEscape);
+  }
+
+  function closeSubscribeOnEscape(event) {
+    if (event.key === 'Escape') closeSubscribeDialog();
+  }
+
+  function submitSubscribe() {
+    var emailInput = document.getElementById('subscribe-email');
+    var error = document.getElementById('subscribe-error');
+    var selected = document.querySelector('input[name="subscribe-type"]:checked');
+    var subscriberEmail = (emailInput.value || '').trim();
+    var type = selected ? selected.value : 'both';
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(subscriberEmail)) {
+      error.textContent = '请填写有效邮箱。';
+      error.hidden = false;
+      emailInput.focus();
+      return;
+    }
+
+    localStorage.setItem(SUBSCRIBE_STORAGE_KEY, subscriberEmail);
+    window.location.href = buildSubscribeMailto(subscriberEmail, type);
+    closeSubscribeDialog();
+  }
+
+  function buildSubscribeMailto(email, type) {
+    var label = type === 'both' ? 'both' : type;
+    var body = [
+      '请不要修改邮件模板内容。',
+      '',
+      '订阅邮箱：' + email,
+      '文章类型：' + label
+    ].join('\n');
+    return 'mailto:' + SUBSCRIBE_EMAIL +
+      '?subject=' + encodeURIComponent('[订阅] Winnies Blog') +
       '&body=' + encodeURIComponent(body).replace(/%0A/g, '%0D%0A');
   }
 

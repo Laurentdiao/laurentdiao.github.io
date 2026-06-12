@@ -1,0 +1,41 @@
+name: Fetch Email Subscribers
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+jobs:
+  fetch-subscribers:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6.0.3
+        with:
+          submodules: false
+
+      - uses: actions/setup-python@v6.2.0
+        with:
+          python-version: '3.12'
+
+      - name: Install Python dependencies
+        run: python -m pip install cryptography
+
+      - name: Fetch Subscribers
+        env:
+          BLOG_EMAIL: ${{ secrets.BLOG_EMAIL }}
+          BLOG_EMAIL_PASSWORD: ${{ secrets.BLOG_EMAIL_PASSWORD }}
+          BLOG_IMAP_SERVER: imap.gmail.com
+          BLOG_IMAP_PORT: '993'
+          SUBSCRIBERS_ENCRYPTION_KEY: ${{ secrets.SUBSCRIBERS_ENCRYPTION_KEY }}
+        run: python .github/scripts/fetch_subscribers.py
+
+      - name: Commit Subscribers
+        uses: stefanzweifel/git-auto-commit-action@v7.1.0
+        with:
+          commit_message: 'Update subscribers'
+          file_pattern: '.github/subscribers.enc .github/subscribers_state.json'
