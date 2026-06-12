@@ -174,19 +174,40 @@ code {
 .admin-mode-menu summary {
   width: 42px;
   height: 40px;
-  display: grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--surface);
   color: var(--text);
   cursor: pointer;
   list-style: none;
-  font-weight: 800;
+  line-height: 1;
 }
 
 .admin-mode-menu summary::-webkit-details-marker {
   display: none;
+}
+
+.hamburger-lines {
+  position: relative;
+  display: block;
+  width: 15px;
+  height: 11px;
+}
+
+.hamburger-lines::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 15px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 0 4.5px 0 currentColor, 0 9px 0 currentColor;
 }
 
 .admin-mode-menu-list {

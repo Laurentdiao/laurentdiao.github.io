@@ -98,18 +98,52 @@ body {
   justify-content: center;
   width: 38px;
   height: 38px;
+  padding: 0 !important;
   border: 1px solid rgba(255,255,255,0.28);
   border-radius: 999px;
   background: rgba(255,255,255,0.16);
   color: #fff;
   cursor: pointer;
+  line-height: 1;
+  text-align: center;
 }
 
 #toggle-menu .site-page {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 0 !important;
   color: inherit;
+  line-height: 1;
+}
+
+#toggle-menu .site-page i {
+  position: relative;
+  display: block;
+  width: 14px;
+  height: 10px;
+  margin: 0;
+  line-height: 1;
+  text-align: center;
+  font-size: 0;
+}
+
+#toggle-menu .site-page i::before {
+  content: '' !important;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 14px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 0 4px 0 currentColor, 0 8px 0 currentColor;
+}
+
+#toggle-menu .site-page i::after {
+  display: none !important;
 }
 
 #nav .menus_items .menus_item a {
