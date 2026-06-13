@@ -24,7 +24,7 @@ beautify()
       content: $title-prefix-icon
       line-height: 1
       transition: all .2s ease-out
-      @extend .fontawesomeIcon
+      display: inline-block; font-weight: 600; font-family: "Font Awesome 7 Free", "Font Awesome 6 Free"; text-rendering: auto; -webkit-font-smoothing: antialiased
 
     &:hover
       &:before
@@ -207,7 +207,7 @@ beautify()
     addBorderRadius()
 
     &:before
-      @extend .fontawesomeIcon
+      display: inline-block; font-weight: 600; font-family: "Font Awesome 7 Free", "Font Awesome 6 Free"; text-rendering: auto; -webkit-font-smoothing: antialiased
       position: absolute
       top: 2px
       right: 12px
@@ -252,7 +252,7 @@ beautify()
       border-left: 5px solid $noticeOutdate-border
 
       &:before
-        @extend .fontawesomeIcon
+        display: inline-block; font-weight: 600; font-family: "Font Awesome 7 Free", "Font Awesome 6 Free"; text-rendering: auto; -webkit-font-smoothing: antialiased
         position: absolute
         top: 50%
         left: .9em

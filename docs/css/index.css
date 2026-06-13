@@ -208,13 +208,7 @@ template {
   overflow: hidden;
   -webkit-box-orient: vertical;
 }
-.fontawesomeIcon,
-.custom-hr:before,
-#post .post-copyright:before,
-#post #post-outdate-notice:before,
-.toggle > .toggle-button::before,
-.note:not(.no-icon)::before,
-.search-dialog hr:before {
+.fontawesomeIcon {
   display: inline-block;
   font-weight: 600;
   font-family: 'Font Awesome 7 Free', 'Font Awesome 6 Free';
@@ -351,6 +345,11 @@ template {
   -o-transition: all 1s ease-in-out;
   -ms-transition: all 1s ease-in-out;
   transition: all 1s ease-in-out;
+  display: inline-block;
+  font-weight: 600;
+  font-family: "Font Awesome 7 Free", "Font Awesome 6 Free";
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
 }
 .verticalCenter,
 .pagination-related .info .info-1,
@@ -5054,6 +5053,11 @@ figure.highlight pre .javascript .function {
   border-radius: 6px;
 }
 #post .post-copyright:before {
+  display: inline-block;
+  font-weight: 600;
+  font-family: "Font Awesome 7 Free", "Font Awesome 6 Free";
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
   position: absolute;
   top: 2px;
   right: 12px;
@@ -5096,6 +5100,11 @@ figure.highlight pre .javascript .function {
   padding: 0 4px;
 }
 #post #post-outdate-notice:before {
+  display: inline-block;
+  font-weight: 600;
+  font-family: "Font Awesome 7 Free", "Font Awesome 6 Free";
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
   position: absolute;
   top: 50%;
   left: 0.9em;
@@ -6380,6 +6389,11 @@ blockquote.pullquote.right {
   display: none;
 }
 .toggle > .toggle-button::before {
+  display: inline-block;
+  font-weight: 600;
+  font-family: "Font Awesome 7 Free", "Font Awesome 6 Free";
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
   margin-right: 8px;
   content: '\f0d7';
   -webkit-transition: -webkit-transform 0.3s ease;
@@ -6584,6 +6598,11 @@ blockquote.pullquote.right {
   top: calc(50% - 0.95em);
   left: 0.8em;
   font-size: larger;
+  display: inline-block;
+  font-weight: 600;
+  font-family: "Font Awesome 7 Free", "Font Awesome 6 Free";
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
 }
 .note.default.flat {
   background: var(--note-default-bg);
