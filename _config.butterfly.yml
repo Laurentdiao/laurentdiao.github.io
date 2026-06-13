@@ -1058,8 +1058,10 @@ inject:
   head:
     - <meta name="robots" content="noindex, nofollow">
     - <link rel="stylesheet" href="/css/custom.css">
+    - <link rel="manifest" href="/manifest.webmanifest">
   bottom:
     - <script src="/js/custom.js"></script>
+    - <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js')}</script>
 
 # CDN Settings
 # Don't modify the following settings unless you know how they work
