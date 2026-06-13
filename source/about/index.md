@@ -11,4 +11,3 @@ type: about
 ### 联系我
 
 - GitHub: [Laurentdiao](https://github.com/Laurentdiao)
-- Email: [winnie’s email](dwl_official@yeah.net)
