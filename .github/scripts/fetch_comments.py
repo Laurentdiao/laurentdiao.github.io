@@ -384,11 +384,10 @@ def main():
             else:
                 print(f"  ⚠️ [{article}] {detail}")
 
-        state["last_uid"] = max_uid
-        state["updated_at"] = datetime.now(timezone.utc).isoformat()
-        save_json(STATE_FILE, state)
-
         if updated_comments:
+            state["last_uid"] = max_uid
+            state["updated_at"] = datetime.now(timezone.utc).isoformat()
+            save_json(STATE_FILE, state)
             sort_comments(comments)
             save_json(COMMENTS_FILE, comments)
             print(f"💾 已保存到 {COMMENTS_FILE}")

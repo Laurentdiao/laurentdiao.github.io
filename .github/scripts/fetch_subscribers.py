@@ -214,11 +214,10 @@ def main():
             print(f"  ✅ {action}: {address[:2]}*** -> {kind}")
             changed = True
 
-        state["last_uid"] = max_uid
-        state["updated_at"] = datetime.now(timezone.utc).isoformat()
-        save_json(STATE_FILE, state)
-
         if changed:
+            state["last_uid"] = max_uid
+            state["updated_at"] = datetime.now(timezone.utc).isoformat()
+            save_json(STATE_FILE, state)
             subscribers.sort(key=lambda item: item.get("email", ""))
             save_subscribers(subscribers)
             print("💾 已加密保存订阅者列表")

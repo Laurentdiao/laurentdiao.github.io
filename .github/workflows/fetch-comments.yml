@@ -30,16 +30,35 @@ jobs:
           BLOG_IMAP_PORT: '993'
         run: python .github/scripts/fetch_comments.py
 
-      - name: Commit Comments
+      - name: Detect Comment Changes
+        id: comment_changes
         run: |
           git add source/data/comments.json .github/comments_state.json
           if git diff --cached --quiet; then
             echo "No comment changes to commit."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
+          echo "changed=true" >> "$GITHUB_OUTPUT"
 
+      - uses: actions/setup-node@v6.4.0
+        if: steps.comment_changes.outputs.changed == 'true'
+        with:
+          node-version: '24'
+
+      - name: Build Site
+        if: steps.comment_changes.outputs.changed == 'true'
+        run: |
+          npm ci
+          npx hexo clean
+          npx hexo generate
+
+      - name: Commit Comments and Site
+        if: steps.comment_changes.outputs.changed == 'true'
+        run: |
+          git add source/data/comments.json .github/comments_state.json docs/ -f
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Update comments"
+          git commit -m "Update comments and site"
           git pull --rebase origin main
           git push origin HEAD:main
