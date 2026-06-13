@@ -4,13 +4,13 @@ document.addEventListener('DOMContentLoaded', function () {
   var SUBSCRIBE_EMAIL = 'dwinnie137@gmail.com';
   var SUBSCRIBE_STORAGE_KEY = 'winnie_blog_subscribe_email';
   var isPost = !!document.getElementById('article-container');
-  var isHome = !!document.getElementById('recent-posts');
+  var isHome = !!document.getElementById('recent-posts') && !document.querySelector('.not-home-page');
 
   injectSubscribeButton();
   bindMenuSubscribeInjection();
 
   // 首页：你好标题 + 朋友圈卡片样式
-  if (isHome) {
+  if (isHome && window.location.pathname === '/') {
     var st = document.getElementById('site-title');
     if (st) st.textContent = '你好~';
 
