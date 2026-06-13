@@ -1,9 +1,12 @@
 {
   "name": "Winnie's Blog",
-  "short_name": "Winnie's Blog",
+  "short_name": "Winnie",
+  "description": "Personal blog",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "lang": "zh-CN",
+  "orientation": "any",
   "background_color": "#2f5141",
   "theme_color": "#2f5141",
   "icons": [
