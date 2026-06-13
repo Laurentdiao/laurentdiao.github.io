@@ -35,11 +35,6 @@ document.addEventListener('DOMContentLoaded', function () {
     var pb = document.createElement('div');
     pb.id = 'reading-progress';
     document.body.prepend(pb);
-    window.addEventListener('scroll', function () {
-      var t = document.documentElement.scrollTop || document.body.scrollTop;
-      var h = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      pb.style.width = h > 0 ? (t / h * 100) + '%' : '0';
-    });
 
     var pc = document.querySelector('.post-content');
     if (pc) {
@@ -64,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
       cb.appendChild(createMailButton({
         className: 'comment-btn',
         label: '写评论',
-        icon: '📧',
+        iconClass: 'far fa-envelope',
         subject: '[评论] ' + articleTitle,
         body: [
           '请不要修改邮件模板内容，只填写“用户名”和“评论内容”即可。',
@@ -88,7 +83,13 @@ document.addEventListener('DOMContentLoaded', function () {
     var icon = document.createElement('span');
     icon.className = 'comment-btn-icon';
     icon.setAttribute('aria-hidden', 'true');
-    icon.textContent = options.icon;
+    if (options.iconClass) {
+      var iconGlyph = document.createElement('i');
+      iconGlyph.className = options.iconClass;
+      icon.appendChild(iconGlyph);
+    } else {
+      icon.textContent = options.icon || '';
+    }
 
     var label = document.createElement('span');
     label.className = 'comment-btn-label';
@@ -221,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function () {
         cd.className = 'comments-display';
 
         var heading = document.createElement('h3');
-        heading.textContent = '💬 评论 (' + data[key].length + ')';
+        heading.textContent = '评论 (' + data[key].length + ')';
         cd.appendChild(heading);
 
         data[key].slice().sort(sortByTime).forEach(function (c) {
@@ -250,7 +251,7 @@ document.addEventListener('DOMContentLoaded', function () {
     actions.appendChild(createMailButton({
       className: 'comment-reply-btn',
       label: '回复',
-      icon: '↩',
+      iconClass: 'fas fa-reply',
       subject: '[回复] ' + article,
       body: [
         '请不要修改邮件模板内容，只填写“用户名”和“回复内容”即可。',
