@@ -4,7 +4,7 @@ mixin articleSort(posts)
     - posts.forEach(article => {
       - const tempYear = date(article.date, 'YYYY')
       - const noCoverClass = article.cover === false || !theme.cover.archives_enable ? 'no-article-cover' : ''
-      - const title = article.title || _p('no_title')
+      - const title = article.title || truncate(article.content || '', 42) || _p('no_title')
       if tempYear !== year
         - year = tempYear
         .article-sort-item.year= year

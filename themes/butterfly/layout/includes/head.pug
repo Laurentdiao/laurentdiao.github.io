@@ -8,7 +8,7 @@ case globalPageType
   when '404'
     - pageTitle = _p('error404')
   default
-    - pageTitle = page.title || config.title || ''
+    - pageTitle = page.title || (page.titleless ? truncate(page.content || '', 42) : '') || config.title || ''
 
 
 - var isSubtitle = config.subtitle ? ' - ' + config.subtitle : ''

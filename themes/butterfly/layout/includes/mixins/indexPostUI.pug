@@ -4,9 +4,14 @@ mixin indexPostUI()
   #recent-posts.recent-posts.nc(class=masonryLayoutClass)
     .recent-post-items
       each article, index in page.posts.data
-        .recent-post-item
+        - const tagItems = article.tags && article.tags.data ? article.tags.data : []
+        - const categoryItems = article.categories && article.categories.data ? article.categories.data : []
+        - const isMomentPost = tagItems.some(item => item.name === '朋友圈') || categoryItems.some(item => item.name === '短文')
+        - const isTitlelessMoment = isMomentPost && (article.titleless === true || article.titleless === 'true' || !article.title)
+        .recent-post-item(class=[isMomentPost ? 'moment-style' : '', isTitlelessMoment ? 'is-titleless' : ''])
           - const link = article.link || article.path
-          - const title = article.title || _p('no_title')
+          - const title = isTitlelessMoment ? '' : (article.title || _p('no_title'))
+          - const content = postDesc(article)
           - const leftOrRight = indexLayout === 3 ? (index % 2 === 0 ? 'left' : 'right') : (indexLayout === 2 ? 'right' : '')
           - const postCover = article.cover
           - const noCover = article.cover === false || !theme.cover.index_enable ? 'no-cover' : ''
@@ -19,10 +24,13 @@ mixin indexPostUI()
                 else
                   div.post-bg(style=`background: ${postCover}`)
           .recent-post-info(class=noCover)
-            a.article-title(href=url_for(link) title=title)
-              if globalPageType === 'home' && (article.top || article.sticky > 0)
-                i.fas.fa-thumbtack.sticky
-              = title
+            if title
+              a.article-title(href=url_for(link) title=title)
+                if globalPageType === 'home' && (article.top || article.sticky > 0)
+                  i.fas.fa-thumbtack.sticky
+                = title
+            if isTitlelessMoment
+              .content.moment-full-content!= article.content || content
             .article-meta-wrap
               if theme.post_meta.page.date_type
                 span.post-meta-date
@@ -108,8 +116,9 @@ mixin indexPostUI()
                           i.fa-solid.fa-spinner.fa-spin
 
             //- Display the article introduction on homepage
-            - const content = postDesc(article)
-            if content
+            if isTitlelessMoment
+              a.moment-permalink(href=url_for(link) aria-label='打开这条朋友圈') 查看
+            else if content
               .content!=content
 
         if theme.ad && theme.ad.index

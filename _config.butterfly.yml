@@ -776,7 +776,7 @@ site_verification:
 # Choose: index - same as Homepage UI / default - same as archives UI
 # leave it empty or index
 category_ui:
-tag_ui:
+tag_ui: index
 
 # Rounded corners for UI elements
 rounded_corners_ui: true

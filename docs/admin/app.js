@@ -4,11 +4,15 @@
   const branch = 'main';
   const apiBase = `https://api.github.com/repos/${owner}/${repo}/contents`;
   const tokenKey = 'winnie_blog_admin_token';
-  const tags = ['随笔', '技术', '生活', '读书笔记', '朋友圈', '日常', '其他'];
+  const defaultTags = ['随笔', '技术', '生活', '读书笔记', '朋友圈', '日常', '其他'];
+  const localTagsKey = 'winnie_blog_admin_tags';
+  const tagsConfigPath = 'source/admin/tags.json';
   const requestTimeoutMs = 15000;
 
   const state = {
     token: localStorage.getItem(tokenKey) || '',
+    tags: loadLocalTags(),
+    tagsSha: null,
     posts: [],
     selectedPost: null,
     about: null,
@@ -39,6 +43,8 @@
     deletePost: $('#delete-post-btn'),
     savePost: $('#save-post-btn'),
     tagsGrid: $('#tags-grid'),
+    tagInput: $('#tag-input'),
+    addTag: $('#add-tag-btn'),
     imageInput: $('#image-input'),
     aboutForm: $('#about-form'),
     aboutSha: $('#about-sha'),
@@ -79,6 +85,13 @@
     $('#open-site-btn').addEventListener('click', () => window.open('https://laurentdiao.github.io', '_blank', 'noreferrer'));
     $('#image-btn').addEventListener('click', () => elements.imageInput.click());
     elements.imageInput.addEventListener('change', handleImageSelection);
+    elements.addTag.addEventListener('click', addTagFromInput);
+    elements.tagInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        addTagFromInput();
+      }
+    });
     elements.postForm.addEventListener('submit', savePost);
     elements.deletePost.addEventListener('click', deleteSelectedPost);
     elements.aboutForm.addEventListener('submit', saveAbout);
@@ -87,13 +100,24 @@
     $('#settings-clear-btn').addEventListener('click', clearToken);
   }
 
-  function renderTags() {
-    elements.tagsGrid.innerHTML = tags.map((tag) => `
-      <label class="tag-chip">
-        <input type="checkbox" name="tag" value="${escapeAttr(tag)}">
-        <span>${escapeHtml(tag)}</span>
-      </label>
-    `).join('');
+  function renderTags(extraTags = []) {
+    const visibleTags = mergeTags([...state.tags, ...extraTags, ...(state.selectedPost?.tags || [])]);
+    elements.tagsGrid.innerHTML = visibleTags.map((tag) => {
+      const canRemove = state.tags.includes(tag);
+      return `
+      <span class="tag-chip-wrap ${canRemove ? '' : 'is-post-only'}">
+        <label class="tag-chip">
+          <input type="checkbox" name="tag" value="${escapeAttr(tag)}">
+          <span>${escapeHtml(tag)}</span>
+        </label>
+        ${canRemove ? `<button class="tag-remove-btn" type="button" data-tag="${escapeAttr(tag)}" aria-label="删除标签 ${escapeAttr(tag)}">×</button>` : ''}
+      </span>
+    `;
+    }).join('');
+
+    $$('.tag-remove-btn').forEach((button) => {
+      button.addEventListener('click', () => removeTag(button.dataset.tag));
+    });
   }
 
   function renderTokenState() {
@@ -128,10 +152,31 @@
   async function syncAll() {
     if (!requireToken()) return;
     await withBusy(async () => {
+      await loadTagsConfig();
       await Promise.all([loadPosts(), loadAbout()]);
       elements.syncLabel.textContent = `已同步 ${formatTime(new Date())}`;
       showNotice('同步完成。', false);
     });
+  }
+
+  async function loadTagsConfig() {
+    try {
+      const file = await githubJSON(tagsConfigPath);
+      const data = JSON.parse(decodeBase64Text(file.content || ''));
+      const nextTags = mergeTags(Array.isArray(data.tags) ? data.tags : defaultTags);
+      state.tags = nextTags.length ? nextTags : [...defaultTags];
+      state.tagsSha = file.sha;
+      saveLocalTags();
+      renderTags();
+    } catch (error) {
+      if (String(error.message || '').includes('GitHub 返回 404')) {
+        state.tags = mergeTags(state.tags);
+        state.tagsSha = null;
+        await saveTagsConfig('Create admin tags');
+        return;
+      }
+      throw error;
+    }
   }
 
   async function loadPosts() {
@@ -143,12 +188,16 @@
       const full = await githubJSON(file.path);
       const markdown = decodeBase64Text(full.content || '');
       const parsed = parseMarkdown(markdown);
-      if (!parsed.frontMatter.title) continue;
+      const tags = listValue(parsed, 'tags');
+      const categories = listValue(parsed, 'categories');
+      const title = parsed.frontMatter.title || '';
       posts.push({
-        title: parsed.frontMatter.title,
+        title,
+        displayTitle: title || displayTitleFromPost(parsed.body),
+        titleless: isTruthy(parsed.frontMatter.titleless) || !title,
         date: parsed.frontMatter.date || '',
-        tags: listValue(parsed, 'tags'),
-        categories: listValue(parsed, 'categories'),
+        tags,
+        categories,
         content: parsed.body,
         filename: file.name,
         path: file.path,
@@ -158,6 +207,7 @@
 
     state.posts = posts.sort((a, b) => String(b.date).localeCompare(String(a.date)));
     renderPosts();
+    renderTags();
     if (!state.selectedPost) startNewPost();
   }
 
@@ -183,7 +233,7 @@
 
     elements.postsList.innerHTML = state.posts.map((post) => `
       <button class="post-item ${state.selectedPost?.filename === post.filename ? 'is-selected' : ''}" type="button" data-filename="${escapeAttr(post.filename)}">
-        <h4>${escapeHtml(post.title)}</h4>
+        <h4>${escapeHtml(post.displayTitle)}</h4>
         <div class="post-meta">
           <span>${escapeHtml(String(post.date).slice(0, 10) || '无日期')}</span>
           ${post.categories.slice(0, 1).map((item) => `<span class="pill">${escapeHtml(item)}</span>`).join('')}
@@ -212,6 +262,7 @@
     elements.postTitle.value = '';
     elements.postContent.value = '';
     setCategory('长文');
+    renderTags();
     setSelectedTags(['随笔']);
     renderPosts();
     setView('posts');
@@ -228,6 +279,7 @@
     elements.postTitle.value = post.title;
     elements.postContent.value = post.content;
     setCategory(post.categories[0] || '长文');
+    renderTags(post.tags);
     setSelectedTags(post.tags.length ? post.tags : ['随笔']);
     renderPosts();
     setView('posts');
@@ -246,17 +298,25 @@
 
     const title = elements.postTitle.value.trim();
     const content = elements.postContent.value.trim();
-    if (!title || !content) {
-      showNotice('标题和正文都要填写。', true);
+    if (!content) {
+      showNotice('正文要填写。朋友圈可以不填标题。', true);
       return;
     }
 
     const selectedTags = getSelectedTags();
     const category = getSelectedCategory();
-    const filename = `${sanitizeFilename(title)}.md`;
+    const titleless = !title;
+    if (titleless && !selectedTags.includes('朋友圈')) {
+      showNotice('只有标签为朋友圈的文章可以不填标题。', true);
+      return;
+    }
+    const filenameBase = title || state.selectedPost?.filename?.replace(/\.md$/i, '') || `moment-${compactTimestamp()}`;
+    const filename = `${sanitizeFilename(filenameBase)}.md`;
+    const actionTitle = title || displayTitleFromPost(content);
     const path = `source/_posts/${filename}`;
     const markdown = postMarkdown({
       title,
+      titleless,
       date: state.selectedPost?.date || blogTimestamp(),
       tags: selectedTags.length ? selectedTags : ['随笔'],
       categories: [category],
@@ -266,10 +326,10 @@
     await withBusy(async () => {
       const mode = elements.postMode.value;
       if (mode === 'edit' && elements.postOriginalFilename.value && filename !== elements.postOriginalFilename.value) {
-        await putFile(path, markdown, null, `Update ${title}`);
-        await deleteFile(`source/_posts/${elements.postOriginalFilename.value}`, elements.postSha.value, `Rename ${state.selectedPost?.title || title}`);
+        await putFile(path, markdown, null, `Update ${actionTitle}`);
+        await deleteFile(`source/_posts/${elements.postOriginalFilename.value}`, elements.postSha.value, `Rename ${state.selectedPost?.displayTitle || actionTitle}`);
       } else {
-        await putFile(path, markdown, mode === 'edit' ? elements.postSha.value : null, mode === 'edit' ? `Update ${title}` : `Add ${title}`);
+        await putFile(path, markdown, mode === 'edit' ? elements.postSha.value : null, mode === 'edit' ? `Update ${actionTitle}` : `Add ${actionTitle}`);
       }
 
       showNotice('已提交到 GitHub，等待 Actions 更新网页。', false);
@@ -281,11 +341,11 @@
 
   async function deleteSelectedPost() {
     if (!state.selectedPost) return;
-    const ok = window.confirm(`删除「${state.selectedPost.title}」？这个操作会直接提交到 GitHub。`);
+    const ok = window.confirm(`删除「${state.selectedPost.displayTitle}」？这个操作会直接提交到 GitHub。`);
     if (!ok) return;
 
     await withBusy(async () => {
-      await deleteFile(`source/_posts/${state.selectedPost.filename}`, state.selectedPost.sha, `Delete ${state.selectedPost.title}`);
+      await deleteFile(`source/_posts/${state.selectedPost.filename}`, state.selectedPost.sha, `Delete ${state.selectedPost.displayTitle}`);
       showNotice('文章已删除。', false);
       state.selectedPost = null;
       await loadPosts();
@@ -320,6 +380,65 @@
       showNotice('About Me 已提交。', false);
       await loadAbout();
     });
+  }
+
+  async function addTagFromInput() {
+    const tag = normalizeTag(elements.tagInput.value);
+    if (!tag) {
+      showNotice('先输入标签名称。', true);
+      return;
+    }
+    const selected = getSelectedTags();
+    if (state.tags.includes(tag)) {
+      setSelectedTags(mergeTags([...selected, tag]));
+      elements.tagInput.value = '';
+      showNotice('这个标签已经存在，已帮你选中。', false);
+      return;
+    }
+
+    state.tags = mergeTags([...state.tags, tag]);
+    elements.tagInput.value = '';
+    saveLocalTags();
+    renderTags([...selected, tag]);
+    setSelectedTags(mergeTags([...selected, tag]));
+
+    if (!requireToken()) return;
+    await withBusy(async () => {
+      await saveTagsConfig(`Add tag ${tag}`);
+      showNotice(`已新增标签：${tag}`, false);
+    });
+  }
+
+  async function removeTag(tag) {
+    const normalized = normalizeTag(tag);
+    if (!normalized) return;
+    const selected = getSelectedTags();
+    const used = state.posts.some((post) => post.tags.includes(normalized));
+    const message = used
+      ? `「${normalized}」已经被文章使用。删除后不会改旧文章，只是不再出现在新文章可选标签里。继续吗？`
+      : `删除标签「${normalized}」？`;
+    if (!window.confirm(message)) return;
+
+    state.tags = state.tags.filter((item) => item !== normalized);
+    if (state.tags.length === 0) state.tags = [...defaultTags];
+    saveLocalTags();
+    const nextSelected = selected.filter((item) => item !== normalized);
+    renderTags(nextSelected);
+    setSelectedTags(nextSelected);
+
+    if (!requireToken()) return;
+    await withBusy(async () => {
+      await saveTagsConfig(`Remove tag ${normalized}`);
+      showNotice(`已删除标签：${normalized}`, false);
+    });
+  }
+
+  async function saveTagsConfig(message) {
+    state.tags = mergeTags(state.tags);
+    if (state.tags.length === 0) state.tags = [...defaultTags];
+    const text = `${JSON.stringify({ tags: state.tags }, null, 2)}\n`;
+    const response = await putFile(tagsConfigPath, text, state.tagsSha, message);
+    state.tagsSha = response.content?.sha || state.tagsSha;
   }
 
   async function handleImageSelection(event) {
@@ -510,14 +629,17 @@
   }
 
   function postMarkdown(post) {
-    const lines = ['---', `title: ${post.title}`, `date: ${post.date || blogTimestamp()}`];
+    const lines = ['---', `title: ${yamlString(post.title)}`, `date: ${post.date || blogTimestamp()}`];
+    if (post.titleless) {
+      lines.push('titleless: true');
+    }
     if (post.tags?.length) {
       lines.push('tags:');
-      post.tags.forEach((tag) => lines.push(`  - ${tag}`));
+      post.tags.forEach((tag) => lines.push(`  - ${yamlString(tag)}`));
     }
     if (post.categories?.length) {
       lines.push('categories:');
-      post.categories.forEach((category) => lines.push(`  - ${category}`));
+      post.categories.forEach((category) => lines.push(`  - ${yamlString(category)}`));
     }
     lines.push('---', '', post.content.trim(), '');
     return lines.join('\n');
@@ -603,6 +725,77 @@
 
   function randomSuffix() {
     return Math.random().toString(36).slice(2, 8);
+  }
+
+  function loadLocalTags() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(localTagsKey) || '[]');
+      const tags = mergeTags(Array.isArray(parsed) ? parsed : []);
+      return tags.length ? tags : [...defaultTags];
+    } catch (_) {
+      return [...defaultTags];
+    }
+  }
+
+  function saveLocalTags() {
+    localStorage.setItem(localTagsKey, JSON.stringify(state.tags));
+  }
+
+  function normalizeTag(value) {
+    return String(value || '')
+      .replace(/[，,;；]+/g, ' ')
+      .replace(/^#+/, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, 24);
+  }
+
+  function mergeTags(values) {
+    const tags = [];
+    (Array.isArray(values) ? values : []).forEach((value) => {
+      const tag = normalizeTag(value);
+      if (tag && !tags.includes(tag)) tags.push(tag);
+    });
+    return tags;
+  }
+
+  function displayTitleFromPost(content) {
+    const plain = String(content || '')
+      .replace(/!\[[^\]]*]\([^)]*\)/g, ' ')
+      .replace(/\[([^\]]+)]\([^)]*\)/g, '$1')
+      .replace(/<[^>]*>/g, ' ')
+      .split('\n')
+      .map((line) => line
+        .replace(/^#{1,6}\s+/, '')
+        .replace(/^>\s*/, '')
+        .replace(/^[-*+]\s+/, '')
+        .trim())
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (!plain) return '朋友圈动态';
+    return plain.length > 28 ? `${plain.slice(0, 28)}...` : plain;
+  }
+
+  function isTruthy(value) {
+    return value === true || ['true', 'yes', '1'].includes(String(value).toLowerCase());
+  }
+
+  function compactTimestamp() {
+    const date = new Date();
+    const pad = (number) => String(number).padStart(2, '0');
+    return [
+      date.getFullYear(),
+      pad(date.getMonth() + 1),
+      pad(date.getDate()),
+      pad(date.getHours()),
+      pad(date.getMinutes()),
+      pad(date.getSeconds())
+    ].join('');
+  }
+
+  function yamlString(value) {
+    return JSON.stringify(String(value || ''));
   }
 
   function stripQuotes(value) {

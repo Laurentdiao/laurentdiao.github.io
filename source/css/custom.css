@@ -430,6 +430,55 @@ body {
   background: var(--tag-bg) !important;
   color: var(--accent) !important;
 }
+.recent-post-item.moment-style.is-titleless {
+  padding: 22px 24px 18px;
+  background:
+    linear-gradient(135deg, rgba(255,255,252,0.96), rgba(240,247,238,0.92)),
+    var(--card-bg);
+}
+.recent-post-item.moment-style.is-titleless .recent-post-info {
+  padding: 0;
+}
+.recent-post-item.moment-style.is-titleless .article-meta-wrap {
+  order: 2;
+  margin-top: 14px;
+  padding-top: 12px;
+}
+.recent-post-item.moment-style.is-titleless .moment-full-content {
+  margin-top: 0;
+  color: var(--text-body);
+  font-size: 0.96em;
+  line-height: 1.82;
+}
+.recent-post-item.moment-style.is-titleless .moment-full-content p {
+  margin: 0.68em 0 0;
+}
+.recent-post-item.moment-style.is-titleless .moment-full-content p:first-child {
+  margin-top: 0;
+}
+.recent-post-item.moment-style.is-titleless .moment-full-content img {
+  display: block;
+  max-width: 100%;
+  margin: 12px 0 2px;
+  border-radius: var(--radius-sm);
+}
+.moment-permalink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  margin-top: 12px;
+  padding: 0 12px;
+  border: 1px solid rgba(49,92,70,0.2);
+  border-radius: 999px;
+  color: var(--accent) !important;
+  background: rgba(49,92,70,0.06);
+  font-size: 0.82em;
+  font-weight: 700;
+  text-decoration: none !important;
+}
+.moment-permalink:hover {
+  background: rgba(49,92,70,0.12);
+}
 
 /* ==========================================
    文章正文排版
