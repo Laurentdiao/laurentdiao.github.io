@@ -37,6 +37,8 @@ jobs:
 
       - run: npm ci
 
+      - run: npx hexo clean
+
       - run: npx hexo generate
 
       - name: Commit and Push
