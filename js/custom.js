@@ -1,10 +1,28 @@
-// custom.js - 评论按钮 + 朋友圈样式 + 阅读进度 + 你好标题
+// custom.js - 评论按钮 + 朋友圈样式 + 阅读进度 + 你好标题 + 点击标题刷新
 document.addEventListener('DOMContentLoaded', function () {
   var COMMENT_EMAIL = 'dwinnie137@gmail.com';
   var SUBSCRIBE_EMAIL = 'dwinnie137@gmail.com';
   var SUBSCRIBE_STORAGE_KEY = 'winnie_blog_subscribe_email';
   var isPost = !!document.getElementById('article-container');
   var isHome = !!document.getElementById('recent-posts') && !document.querySelector('.not-home-page');
+
+  // 点击网站名称刷新（清除 SW 缓存后硬刷新）
+  var siteName = document.querySelector('.nav-site-title, #site-name');
+  if (siteName) {
+    siteName.style.cursor = 'pointer';
+    siteName.addEventListener('click', function (e) {
+      e.preventDefault();
+      if ('caches' in window) {
+        caches.keys().then(function (keys) {
+          return Promise.all(keys.map(function (k) { return caches.delete(k); }));
+        }).then(function () {
+          window.location.reload(true);
+        });
+      } else {
+        window.location.reload(true);
+      }
+    });
+  }
 
   injectSubscribeButton();
   bindMenuSubscribeInjection();
